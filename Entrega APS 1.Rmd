@@ -1,0 +1,140 @@
+---
+title: "APS 1: R for data Science"
+author: "Bruno Carlin"
+date: "08/29/2018"
+output:
+  html_document:
+    toc: true # table of content true
+    toc_depth: 3  # upto three depths of headings (specified by #, ## and ###)
+    number_sections: true  ## if you want number sections at each table header
+    theme: united  # many options for theme, this one is my favorite.
+    highlight: tango  # specifies the syntax highlighting style
+---
+
+# Importar as bibliotecas
+```{r Bibliotecas, message=FALSE, warning=FALSE}
+require(tidyverse)
+# se falahar intalar Rtolls e se ainda não funcionar library(pkgbuild)
+#devtools::install_github("r-lib/lobstr")
+require(lobstr)
+```
+
+
+# Executar os exercícios
+
+## Ex 1 Aproximação de Monte Carlo para uma área
+
+Criei um valor numérico para economizar linhah durante essas simulações, támbem coloquei uma semente qualquer
+lembrando que se não escolhermos uma semente fica impossível de replicar nosso resultados.
+
+```{r Difinir número de loops}
+runs <- 100000
+set.seed(1234)
+```
+
+Runif funciona usando uma distribuição uniforme com min e max definidos pelo usuário.
+me aproveitando do fato do R realizar subtrações com vetores realizei uma Aproximação de Monte Carlo para uma área
+```{r Aproximação de Monte Carlo para uma área}
+x <- runif(runs,min=-0,max=1)
+
+y <- runif(runs,min=-0,max=1)
+
+mean((x > y) & (x ^ 2 < y))
+```
+
+
+
+## Ex 2 Aproximação de Monte Carlo para uma probabilidade
+
+Não consegui resolver todo o exercíciono no R.
+Valores dos Betas e Alphas foram feitos com contas de padeiro.
+Usei a função rgama, que estima distribuições gamma? Com os parâmetros encontrados no sistema.
+ao realizarmos Profit < Loses me aproveito do fato do R converter verdadeiros em um e falsos em zero e portanto podemos somar quantas vezes perdemos dinheiro e dividirmos isso pelo total de vezes que realizarmos o experimento para criarmos uma Aproximação de Monte Carlo para uma probabilidade
+```{r Aproximação de Monte Carlo para uma probabilidade}
+BetaP <- 10/2.25
+AlphaP <- BetaP*10
+
+Profit <- rgamma(runs, shape= AlphaP, rate = BetaP)
+
+BetaL <- 7/4
+AlphaL <- BetaL*7
+
+Loses <- rgamma(runs, shape= AlphaL, rate = BetaL)
+
+sum(Profit < Loses)/runs
+```
+
+
+
+## Ex 3 Aproximação de Monte Carlo para uma esperança
+
+Não consegui resolver sem a ajuda do tidyverse, especialmente da função map que permite esse loop de 1:8 no paramêtro Distances da minha função.
+
+Acho que esse foi o exercício mais difícil de ignorar o for porque os paramêtros de uma  função são complicados de manipular usando apenas à família apply do base.
+
+dist recebe pelo menos uma matriz e devolve a distância de todos os membros de cada uma das linhas,a média dessas distâncias resolve o problema
+
+tive que definir outro runs porque com 100000 o R quebrava :), eu confesso que deu preguiça de escrever minha função de distância.
+
+Sem_For é uma função que recebe uma quantidade de distâncias e um número de simulações e devolve uma Aproximação de Monte Carlo para uma esperança
+```{r Aproximação de Monte Carlo para uma esperança}
+Sem_for <- function(Distances = 8,runs = 1000){  
+x <- replicate(Distances,runif(runs,min=-0,max=1))
+runs <- 1000
+mean(dist(x, method = "euclidean"))
+}
+
+map(1:8,Sem_for)
+
+```
+
+
+
+
+## Ex 4 Mínimos quadrados ordinários
+
+Primeiro temos que baixar os dados
+
+http://www-bcf.usc.edu/~gareth/ISL/data.html
+
+depois importar esses dados no R
+
+```{r Importação de dadis}
+Advertising <- read.csv("Advertising.csv")
+```
+
+
+
+Segui a receita de bolo do cálculo de Beta chápeu, mas eu fiquei confuso com a ordem das operações e depois de ter assistido à
+
+https://www.youtube.com/watch?v=rPMK4yRqlvU
+
+E usado a funçao ast que mostra árvore de operações que o R executa consegui dormir em paz sabendo que eu não precisava colocar () na minha resposta.
+
+A call da função lm nos retorna tudo que precisamos para comparação com a nossa resposta.
+
+
+Para formar nossos próprios Betas só precisamos manipular matrizes e usar o truque de adcionar como primeira coluna uma fileira cheia de uns.
+
+Realizando esse processo temos na mão os Mínimos quadrados ordinários
+```{r Mínimos quadrados ordinários}
+lm(sales ~  TV  + radio + newspaper , data = Advertising)
+
+Sales <- as.matrix(Advertising$sales)
+Regressoras <- as.matrix(cbind(1,Advertising$TV,Advertising$radio,Advertising$newspaper))
+
+
+
+solve(t(Regressoras)%*%Regressoras)%*%t(Regressoras)%*%Sales
+      
+
+ast(solve(t(Regressoras) %*%Sales) %*%t(Regressoras)%*%Sales)
+
+```
+
+
+para gerar outras parte da função lm ir em: https://economictheoryblog.com/2016/02/20/rebuild-ols-estimator-manually-in-r/
+
+
+
+
