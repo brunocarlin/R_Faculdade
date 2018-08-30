@@ -372,7 +372,7 @@ $(document).ready(function () {
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">require</span>(tidyverse)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co"># se falahar intalar Rtolls e se ainda não funcionar library(pkgbuild)</span></a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#devtools::install_github(&quot;r-lib/lobstr&quot;)</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">require</span>(lobstr)</a></code></pre></div>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">#require(lobstr)</span></a></code></pre></div>
 </div>
 <div id="executar-os-exercicios" class="section level1">
 <h1><span class="header-section-number">2</span> Executar os exercícios</h1>
@@ -391,7 +391,7 @@ $(document).ready(function () {
 </div>
 <div id="ex-2-aproximacao-de-monte-carlo-para-uma-probabilidade" class="section level2">
 <h2><span class="header-section-number">2.2</span> Ex 2 Aproximação de Monte Carlo para uma probabilidade</h2>
-<p>Não consegui resolver todo o exercíciono no R. Valores dos Betas e Alphas foram feitos com contas de padeiro. Usei a função rgama, que estima distribuições gamma? Com os parâmetros encontrados no sistema. ao realizarmos Profit &lt; Loses me aproveito do fato do R converter verdadeiros em um e falso em zero e portanto podemos somar quantas vezes perdemos dinheiro e dividirmos isso pelo total de vezes que realizarmos o experimento temos uma Aproximação de Monte Carlo para uma probabilidade</p>
+<p>Não consegui resolver todo o exercíciono no R. Valores dos Betas e Alphas foram feitos com contas de padeiro. Usei a função rgama, que estima distribuições gamma? Com os parâmetros encontrados no sistema. ao realizarmos Profit &lt; Loses me aproveito do fato do R converter verdadeiros em um e falsos em zero e portanto podemos somar quantas vezes perdemos dinheiro e dividirmos isso pelo total de vezes que realizarmos o experimento para criarmos uma Aproximação de Monte Carlo para uma probabilidade</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">BetaP &lt;-<span class="st"> </span><span class="dv">10</span><span class="op">/</span><span class="fl">2.25</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">AlphaP &lt;-<span class="st"> </span>BetaP<span class="op">*</span><span class="dv">10</span></a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"></a>
@@ -412,36 +412,35 @@ $(document).ready(function () {
 <p>dist recebe pelo menos uma matriz e devolve a distância de todos os membros de cada uma das linhas,a média dessas distâncias resolve o problema</p>
 <p>tive que definir outro runs porque com 100000 o R quebrava :), eu confesso que deu preguiça de escrever minha função de distância.</p>
 <p>Sem_For é uma função que recebe uma quantidade de distâncias e um número de simulações e devolve uma Aproximação de Monte Carlo para uma esperança</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">Sem_for &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">Distances =</span> <span class="dv">8</span>,<span class="dt">runs =</span> <span class="dv">1000</span>){  </a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">x &lt;-<span class="st"> </span><span class="kw">replicate</span>(Distances,<span class="kw">runif</span>(runs,<span class="dt">min=</span><span class="op">-</span><span class="dv">0</span>,<span class="dt">max=</span><span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">runs &lt;-<span class="st"> </span><span class="dv">1000</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="kw">mean</span>(<span class="kw">dist</span>(x, <span class="dt">method =</span> <span class="st">&quot;euclidean&quot;</span>))</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">}</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>,Sem_for)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">Sem_for &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">Distances =</span> <span class="dv">8</span>,<span class="dt">runs =</span> <span class="dv">10000</span>){  </a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">coords &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">runif</span>(runs<span class="op">*</span>Distances,<span class="dt">min =</span> <span class="dv">0</span>,<span class="dt">max =</span> <span class="dv">1</span>), <span class="dt">ncol =</span> Distances)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw">mean</span>(<span class="kw">dist</span>(coords, <span class="dt">method =</span> <span class="st">&quot;euclidean&quot;</span>))</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">}</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>,Sem_for)</a></code></pre></div>
 <pre><code>## [[1]]
-## [1] 0.3325613
+## [1] 0.3351273
 ## 
 ## [[2]]
-## [1] 0.5228662
+## [1] 0.5196285
 ## 
 ## [[3]]
-## [1] 0.6643075
+## [1] 0.6624971
 ## 
 ## [[4]]
-## [1] 0.7856463
+## [1] 0.7782099
 ## 
 ## [[5]]
-## [1] 0.8732069
+## [1] 0.8789747
 ## 
 ## [[6]]
-## [1] 0.9707684
+## [1] 0.9732589
 ## 
 ## [[7]]
-## [1] 1.045781
+## [1] 1.053066
 ## 
 ## [[8]]
-## [1] 1.131739</code></pre>
+## [1] 1.129017</code></pre>
 </div>
 <div id="ex-4-minimos-quadrados-ordinarios" class="section level2">
 <h2><span class="header-section-number">2.4</span> Ex 4 Mínimos quadrados ordinários</h2>
@@ -454,7 +453,7 @@ $(document).ready(function () {
 <p>E usado a funçao ast que mostra árvore de operações que o R executa consegui dormir em paz sabendo que eu não precisava colocar () na minha resposta.</p>
 <p>A call da função lm nos retorna tudo que precisamos para comparação com a nossa resposta.</p>
 <p>Para formar nossos próprios Betas só precisamos manipular matrizes e usar o truque de adcionar como primeira coluna uma fileira cheia de uns.</p>
-<p>Realizando esse processo temos na mão os Mínimos quadrados ordinários</p>
+<p>dados em : Realizando esse processo temos na mão os Mínimos quadrados ordinários</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">lm</span>(sales <span class="op">~</span><span class="st">  </span>TV  <span class="op">+</span><span class="st"> </span>radio <span class="op">+</span><span class="st"> </span>newspaper , <span class="dt">data =</span> Advertising)</a></code></pre></div>
 <pre><code>## 
 ## Call:
@@ -464,27 +463,15 @@ $(document).ready(function () {
 ## (Intercept)           TV        radio    newspaper  
 ##    2.938889     0.045765     0.188530    -0.001037</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">Sales &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(Advertising<span class="op">$</span>sales)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">Regressoras &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">cbind</span>(<span class="dv">1</span>,Advertising<span class="op">$</span>TV,Advertising<span class="op">$</span>radio,Advertising<span class="op">$</span>newspaper))</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">Regressoras &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">cbind</span>(<span class="dv">1</span>,Advertising[,<span class="kw">c</span>(<span class="st">&quot;TV&quot;</span>,<span class="st">&quot;radio&quot;</span>,<span class="st">&quot;newspaper&quot;</span>)]))</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="kw">solve</span>(<span class="kw">t</span>(Regressoras)<span class="op">%*%</span>Regressoras)<span class="op">%*%</span><span class="kw">t</span>(Regressoras)<span class="op">%*%</span>Sales</a></code></pre></div>
-<pre><code>##              [,1]
-## [1,]  2.938889369
-## [2,]  0.045764645
-## [3,]  0.188530017
-## [4,] -0.001037493</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">ast</span>(<span class="kw">solve</span>(<span class="kw">t</span>(Regressoras) <span class="op">%*%</span>Sales) <span class="op">%*%</span><span class="kw">t</span>(Regressoras)<span class="op">%*%</span>Sales)</a></code></pre></div>
-<pre><code>## o-`%*%` 
-## +-o-`%*%` 
-## | +-o-solve 
-## | | \-o-`%*%` 
-## | |   +-o-t 
-## | |   | \-Regressoras 
-## | |   \-Sales 
-## | \-o-t 
-## |   \-Regressoras 
-## \-Sales</code></pre>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw">solve</span>(<span class="kw">t</span>(Regressoras)<span class="op">%*%</span>Regressoras)<span class="op">%*%</span><span class="kw">t</span>(Regressoras)<span class="op">%*%</span>Sales</a></code></pre></div>
+<pre><code>##                   [,1]
+## 1          2.938889369
+## TV         0.045764645
+## radio      0.188530017
+## newspaper -0.001037493</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co">#ast(solve(t(Regressoras) %*%Sales) %*%t(Regressoras)%*%Sales)</span></a></code></pre></div>
 <p>para gerar outras parte da função lm ir em: <a href="https://economictheoryblog.com/2016/02/20/rebuild-ols-estimator-manually-in-r/" class="uri">https://economictheoryblog.com/2016/02/20/rebuild-ols-estimator-manually-in-r/</a></p>
 </div>
 </div>

@@ -16,7 +16,7 @@ output:
 require(tidyverse)
 # se falahar intalar Rtolls e se ainda não funcionar library(pkgbuild)
 #devtools::install_github("r-lib/lobstr")
-require(lobstr)
+#require(lobstr)
 ```
 
 
@@ -78,10 +78,9 @@ tive que definir outro runs porque com 100000 o R quebrava :), eu confesso que d
 
 Sem_For é uma função que recebe uma quantidade de distâncias e um número de simulações e devolve uma Aproximação de Monte Carlo para uma esperança
 ```{r Aproximação de Monte Carlo para uma esperança}
-Sem_for <- function(Distances = 8,runs = 1000){  
-x <- replicate(Distances,runif(runs,min=-0,max=1))
-runs <- 1000
-mean(dist(x, method = "euclidean"))
+Sem_for <- function(Distances = 8,runs = 10000){  
+coords <- matrix(runif(runs*Distances,min = 0,max = 1), ncol = Distances)
+mean(dist(coords, method = "euclidean"))
 }
 
 map(1:8,Sem_for)
@@ -116,19 +115,17 @@ A call da função lm nos retorna tudo que precisamos para comparação com a no
 
 Para formar nossos próprios Betas só precisamos manipular matrizes e usar o truque de adcionar como primeira coluna uma fileira cheia de uns.
 
+dados em :
 Realizando esse processo temos na mão os Mínimos quadrados ordinários
 ```{r Mínimos quadrados ordinários}
 lm(sales ~  TV  + radio + newspaper , data = Advertising)
 
 Sales <- as.matrix(Advertising$sales)
-Regressoras <- as.matrix(cbind(1,Advertising$TV,Advertising$radio,Advertising$newspaper))
-
-
+Regressoras <- as.matrix(cbind(1,Advertising[,c("TV","radio","newspaper")]))
 
 solve(t(Regressoras)%*%Regressoras)%*%t(Regressoras)%*%Sales
       
-
-ast(solve(t(Regressoras) %*%Sales) %*%t(Regressoras)%*%Sales)
+#ast(solve(t(Regressoras) %*%Sales) %*%t(Regressoras)%*%Sales)
 
 ```
 
